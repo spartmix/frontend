@@ -1,0 +1,11 @@
+.botao{
+    margin:2px 0 0 2px;
+}
+
+.botaoEnviar{
+    margin-top: 2px;
+}
+
+td{
+    word-break: break-all;
+}
