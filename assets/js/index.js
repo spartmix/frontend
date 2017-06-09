@@ -7,6 +7,14 @@ var Account = function(objAccount){
     self.tipoConta = ko.observable(objAccount.tipoConta);
 };
 
+var Infos = function(objAccount){
+    var self = this;
+
+    self.cNumeroConta = ko.observable(objAccount.cNumeroConta);
+    self.saldoConta = ko.observable(objAccount.saldoConta);
+    self.limiteConta = ko.observable(objAccount.limiteConta);
+};
+
 
 var ModelAccounts = function () {
     var self = this;
@@ -17,6 +25,8 @@ var ModelAccounts = function () {
     self.tipo = ko.observable('');
     self.editing = ko.observable(false);
     self.finding = ko.observable('');
+    self.accountsInfo = ko.observableArray();
+    self.infosAccount = ko.observable(false);
 
     //Exibir
     $.ajax ({
@@ -29,6 +39,7 @@ var ModelAccounts = function () {
             }
         }
     });
+
     //Editar
     self.editAccount = function(editar) {
         self.idCliente(editar.idCliente());
@@ -125,7 +136,30 @@ var ModelAccounts = function () {
             || accentRemover(account.tipoConta().toLowerCase()).indexOf(accentRemover(self.finding().toLowerCase())) >= 0;
         })
     });
+
+
+    // self.infosAccount = function() {
+    //     infosAccount(true);
+    // }
+
+    // self.verif = function() {
+    //     if(false === infosAccount()) {
+    //     }
+    //         $.ajax ({
+    //             url: window.global.urlapi+"/v1/contas",
+    //             type: "GET",
+    //             success: function(result){
+    //                 var records = result.records;
+    //                 for (var i = 0; i < records.length; i++) {
+    //                     self.accountsInfo.push(new Infos(records[i]));
+    //                 }
+    //             }
+    //         });
+    // }
+
+
 }
+
 
 window.model = new ModelAccounts();
 

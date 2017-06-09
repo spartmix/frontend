@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title></title>
+    <title>Cadastros e Consultas</title>
     <meta charset="utf-8">
     <link rel="stylesheet" href="vendor/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="./css/index.css">
@@ -18,20 +18,18 @@
                 <strong>Contas</strong>
             </a>
             <form class="navbar-form navbar-left">
-                <div class="form-group">
-                    <input type="text" data-bind="textInput: finding" class="form-control" placeholder="Conta ou nome do Cliente">
+                <div class="input-group">
+                    <label class="input-group-addon glyphicon glyphicon-search"></label>
+                    <input type="text" data-bind="textInput: finding" maxlength="25" class="form-control" placeholder="Conta ou nome do Cliente">
                 </div>
-                <button type="submit" class="btn btn-default">Search</button>
+                <button type="submit" class="btn btn-default glyphicon glyphicon-search"></button>
             </form>
         </div>
     </div>
 </nav>
-
-
-
 <div class="container-fluid">
     <div class="row">
-        <div class="col-md-9" style="float:left;">
+        <div class="col-md-8" style="float:left;">
             <fieldset>
                 <legend><h3><strong>Clientes Cadastrados</strong></h3></legend>
                     <table class="table table-striped table-hover">
@@ -41,7 +39,9 @@
                                 <td><strong>Nome Cliente</strong></td>
                                 <td><strong>Numero conta</strong></td>
                                 <td><strong>Tipo Conta</strong></td>
-                                <td><strong>Opções</strong></td>
+                                <td><strong>Saldo</strong></td>
+<!--                                 <td><strong>Limite</strong></td>
+                                <td><strong>Opções</strong></td> -->
                             </tr>
                         </thead>
                         <tbody data-bind="foreach: filteredAccounts">
@@ -51,35 +51,77 @@
                                 <td data-bind="text: numeroConta"></td>
                                 <td data-bind="text: tipoConta"></td>
                                 <td>
-                                    <button data-bind="click: $parent.removeAccount" class="botao btn btn-info btn-sm pull-right">DEL</button>
-                                    <button data-bind="click: $parent.editAccount" class="botao btn btn-info btn-sm pull-right">EDIT</button>
+                                    <button data-bind="click: $parent.removeAccount" class="botao btn btn-info btn-sm">DEL</button>
+                                    <button data-bind="click: $parent.editAccount" class="botao btn btn-info btn-sm">EDIT</button>
+                                    <button data-bind="click: $parent.infosAccount" class="botao btn btn-info btn-sm btn btn-info btn-lg" data-toggle="modal" data-target="#myModal"><a href="#" style="color: #fff; text-decoration: none;">INFO</a></button>
                                 </td>
                             </tr>
                         </tbody>
                     </table>
             </fieldset>
         </div>
-        <div class="col-md-3" style="float: right;">
+        <div class="col-md-3" style="float:right; margin-right: 3%;">
             <fieldset>
                 <legend><h3><strong data-bind="text: editButton"></strong></h3></legend>
                     <form data-bind="submit: register" method="POST">
                         <div class="input-group">
-                            <span class="input-group-addon" id="basic-addon1">Nome:</span>
-                            <input type="text" autocomplete="off" data-bind="value: nome" name="nome" maxlength="70" placeholder="Nome do Cliente" class="form-control">
+                            <label class="input-group-addon glyphicon glyphicon-user"></label>
+                            <input style="margin-top: 1px;" type="text" autocomplete="off" required="" data-bind="value: nome" name="nome" maxlength="70" placeholder="Nome do Cliente" class="form-control">
                         </div>
                         <br>
                         <div class="input-group">
-                            <span class="input-group-addon" id="basic-addon1">Número</span>
-                            <input type="text" autocomplete="off" maxlength="6" data-bind="value: numero" onkeyup="somenteNumeros(this);" name="numero" placeholder="Número da conta" class="form-control" >
+                            <label class="input-group-addon glyphicon glyphicon-user"></label>
+                            <input style="margin-top: 1px;" type="text" autocomplete="off" required="" maxlength="6" data-bind="value: numero" onkeyup="somenteNumeros(this);" name="numero" placeholder="Número da conta" class="form-control" >
                         </div>
                         <br>
                         <div class="input-group">
-                            <span class="input-group-addon" id="basic-addon1" >Tipo</span>
-                            <input type="text" autocomplete="off"  data-bind="value: tipo" maxlength="30" name="tipo" placeholder="Tipo da conta" class="form-control">
+                            <label class="input-group-addon glyphicon glyphicon-user"></label>
+                            <input style="margin-top: 1px;" type="text" autocomplete="off" required="" data-bind="value: tipo" maxlength="30" name="tipo" placeholder="Corrente ou Poupança" class="form-control">
                         </div>
-                        <button type="submit" data-bind="text: editButton" class="botaoEnviar btn btn-info btn-sm pull-left"></button>
+                        <button type="submit" data-bind="text: editButton" class="botao Enviar btn btn-info btn-sm pull-left"></button>
                     </form>
             </fieldset>
+        </div>
+    </div>
+    <div id="myModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Informações</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-md-12" style="float:left;">
+                                <fieldset>
+                                        <table class="table table-striped table-hover">
+                                            <thead>
+                                                <tr>
+                                                    <td><strong>Numero conta</strong></td>
+                                                    <td><strong>Saldo</strong></td>
+                                                    <td><strong>Limite</strong></td>
+                                                </tr>
+                                            </thead>
+                                            <tbody data-bind="foreach: accountsInfo">
+                                                <tr>
+                                                    <td data-bind="text: cNumeroConta"></td>
+                                                    <td data-bind="text: saldoConta"></td>
+                                                    <td data-bind="text: limiteConta"></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                </fieldset>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+
         </div>
     </div>
 </div>
