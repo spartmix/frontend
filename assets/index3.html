@@ -1,29 +1,60 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title></title>
-    <style>
-    .left{
-        float: left;
-        width: 800px;
-        background-color: #f3f3f3;
-        height: 600px;
-    }
+<title>Cadastros e Consultas</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="vendor/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="./css/index.css">
 
-    .right{
-        float: right;;
-        width: 800px;
-        height: 400px;
-        background-color: #ccc;
-    }
-</style>
 </head>
-<body>
-<div class="left">aaa</div>
-<div class="right">aa/div>
+
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-8" style="float:left;">
+            <fieldset>
+                <legend><h3><strong>Clientes Cadastrados</strong></h3></legend>
+                    <table class="table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <td><strong>ID Cliente</strong></td>
+                                <td><strong>Nome Cliente</strong></td>
+                                <td><strong>Numero conta</strong></td>
+                                <td><strong>Tipo Conta</strong></td>
+                                <td><strong>Numero Conta</strong></td>
+                                <td><strong>Saldo</strong></td>
+                                <td><strong>Limite</strong></td>
+                            </tr>
+                        </thead>
+                        <tbody data-bind="foreach: accounts">
+                            <tr>
+                                <td data-bind="text: idCliente"></td>
+                                <td data-bind="text: nomeCliente"></td>
+                                <td data-bind="text: numeroConta"></td>
+                                <td data-bind="text: tipoConta"></td>
+                                <td data-bind="text: cNumeroConta"></td>
+                                <td data-bind="text: saldoConta"></td>
+                                <td data-bind="text: limiteConta"></td>
+                                <td>
+                                    <button data-bind="click: $parent.removeAccount" class="botao btn btn-info btn-sm">DEL</button>
+                                    <button data-bind="click: $parent.editAccount" class="botao btn btn-info btn-sm">EDIT</button>
+                                    <button data-bind="click: $parent.infosAccount" class="botao btn btn-info btn-sm btn btn-info btn-lg" data-toggle="modal" data-target="#myModal"><a href="#" style="color: #fff; text-decoration: none;">INFO</a></button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+            </fieldset>
+        </div>
+    </div>
+</div>
 
 
 
-
+<script type="text/javascript" src="./vendor/jquery/jquery-3.2.1.min.js"></script>
+<script type="text/javascript" src="./vendor/bootstrap/js/bootstrap.min.js"></script>
+<!-- <script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script> -->
+<script type="text/javascript" src="./vendor/knockout/knockout-3.4.2.js"></script>
+<script type="text/javascript" src="./js/global.js"></script>
+<script type="text/javascript" src="./js/index2.js"></script>
 </body>
 </html>

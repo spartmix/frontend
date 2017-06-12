@@ -1,15 +1,9 @@
 var Account = function(objAccount){
     var self = this;
-
     self.idCliente = ko.observable(objAccount.idCliente);
     self.nomeCliente = ko.observable(objAccount.nomeCliente);
     self.numeroConta = ko.observable(objAccount.numeroConta);
     self.tipoConta = ko.observable(objAccount.tipoConta);
-};
-
-var Infos = function(objAccount){
-    var self = this;
-
     self.cNumeroConta = ko.observable(objAccount.cNumeroConta);
     self.saldoConta = ko.observable(objAccount.saldoConta);
     self.limiteConta = ko.observable(objAccount.limiteConta);
@@ -19,14 +13,17 @@ var Infos = function(objAccount){
 var ModelAccounts = function () {
     var self = this;
     self.accounts = ko.observableArray();
+    self.teste = ko.observableArray();
     self.idCliente = ko.observable();
     self.nome = ko.observable('');
     self.numero = ko.observable('');
     self.tipo = ko.observable('');
+    self.saldo = ko.observable('');
+    self.limite = ko.observable('');
     self.editing = ko.observable(false);
     self.finding = ko.observable('');
-    self.accountsInfo = ko.observableArray();
-    self.infosAccount = ko.observable(false);
+    self.arrayLess = ko.observable('');
+
 
     //Exibir
     $.ajax ({
@@ -36,6 +33,7 @@ var ModelAccounts = function () {
             var records = result.records;
             for (var i = 0; i < records.length; i++) {
                 self.accounts.push(new Account(records[i]));
+
             }
         }
     });
@@ -46,6 +44,8 @@ var ModelAccounts = function () {
         self.nome(editar.nomeCliente());
         self.numero(editar.numeroConta());
         self.tipo(editar.tipoConta());
+        self.saldo(editar.saldoConta());
+        self.limite(editar.limiteConta());
         self.editing(true);
     }
 
@@ -55,7 +55,6 @@ var ModelAccounts = function () {
 
     //remover
     self.removeAccount = function(account) {
-        console.log('removeAccount');
         $.ajax ({
             url:window.global.urlapi+"/v1/clientes/" + account.idCliente(),
             type:"DELETE",
@@ -67,7 +66,9 @@ var ModelAccounts = function () {
     //Registrar
     self.register = function() {
         if (false === self.editing()){
-            return self.add();
+            self.add();
+            self.ad();
+            return;
         }
         self.edit();
     }
@@ -83,11 +84,28 @@ var ModelAccounts = function () {
             },
             success: function(insert) {
                 self.accounts.push(new Account(insert.records));
-                self.nome('');
-                self.numero('');
-                self.tipo('');
+                // self.nome('');
+                // self.numero('');
+                // self.tipo('');
             }
         });
+    }
+
+    self.ad = function() {
+        $.ajax ({
+            url: window.global.urlapi+"/v1/contas",
+            type: "POST",
+            data: {
+                cNumeroConta: self.numero(),
+                limiteConta: self.limite(),
+                saldoConta: self.saldo()
+            },
+            success: function(insert) {
+               var secSearch = ko.utils.arrayFirst(self.accounts(), function(secEditingAccount){
+                    return secEditingAccount.idCliente() === self.idCliente();
+                });
+            }
+        })
     }
 
     self.edit = function() {
@@ -97,7 +115,10 @@ var ModelAccounts = function () {
             data: {
                 nomeCliente: self.nome(),
                 numeroConta: self.numero(),
-                tipoConta: self.tipo()
+                tipoConta: self.tipo(),
+                saldoConta: self.saldo(),
+                limiteConta: self.limite(),
+                cNumeroConta: self.numero()
             },
             success: function(result) {
                 var searchAccount = ko.utils.arrayFirst(self.accounts(), function(editingAccount){
@@ -106,9 +127,13 @@ var ModelAccounts = function () {
                 searchAccount.nomeCliente(result.records.nomeCliente);
                 searchAccount.numeroConta(result.records.numeroConta);
                 searchAccount.tipoConta(result.records.tipoConta);
+                searchAccount.saldoConta(result.records.saldoConta);
+                searchAccount.limiteConta(result.records.limiteConta);
                 self.nome('');
                 self.numero('');
                 self.tipo('');
+                self.saldo('');
+                self.limite('');
                 self.editing(false);
             }
         });
@@ -138,25 +163,13 @@ var ModelAccounts = function () {
     });
 
 
-    // self.infosAccount = function() {
-    //     infosAccount(true);
-    // }
+    self.infosAccount = function(consulta) {
+        // if (consulta.idCliente().indexOf(self.teste()) >= 0) {
+            self.teste.push(consulta);
+        // }
 
-    // self.verif = function() {
-    //     if(false === infosAccount()) {
-    //     }
-    //         $.ajax ({
-    //             url: window.global.urlapi+"/v1/contas",
-    //             type: "GET",
-    //             success: function(result){
-    //                 var records = result.records;
-    //                 for (var i = 0; i < records.length; i++) {
-    //                     self.accountsInfo.push(new Infos(records[i]));
-    //                 }
-    //             }
-    //         });
-    // }
-
+        // self.teste.push(consulta);
+    }
 
 }
 
@@ -167,3 +180,6 @@ ko.applyBindings(window.model);
 
 
 
+$("#myModal").on("hidden.bs.modal", function () {
+    console.log(window.model.teste.removeAll());
+});

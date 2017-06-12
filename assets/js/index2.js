@@ -1,25 +1,55 @@
-var TaskManager = function () {
+var Account = function(objAccount){
     var self = this;
 
-    self.taskToAdd = ko.observable("");
-    self.allTasks = ko.observableArray(["Fazer alguma coisa com knockout", "..."]);
-    self.addTaskComplete = ko.observable("");
-    self.taskComplete = ko.observableArray(["teste"]);
-    self.selectedTasks = ko.observableArray();
-
-    self.addTask = function () {
-        if ((self.taskToAdd() != "") && (self.allTasks.indexOf(self.taskToAdd()) < 0))
-
-            self.allTasks.push(self.taskToAdd());
-        self.taskToAdd();
-    };
-
-    self.completeTask = function() {
-        console.log(self.taskComplete, self.selectedTasks())
-        self.taskComplete.push(self.selectedTasks());
-        self.allTasks.removeAll(self.selectedTasks());
-        self.selectedTasks([]);
-    };
+    self.idCliente = ko.observable(objAccount.idCliente);
+    self.nomeCliente = ko.observable(objAccount.nomeCliente);
+    self.numeroConta = ko.observable(objAccount.numeroConta);
+    self.tipoConta = ko.observable(objAccount.tipoConta);
+    self.cNumeroConta = ko.observable(objAccount.cNumeroConta);
+    self.saldoConta = ko.observable(objAccount.saldoConta);
+    self.limiteConta = ko.observable(objAccount.limiteConta);
 };
 
-ko.applyBindings(new TaskManager());
+// var Infos = function(objAccount){
+//     var self = this;
+
+//     self.cNumeroConta = ko.observable(objAccount.cNumeroConta);
+//     self.saldoConta = ko.observable(objAccount.saldoConta);
+//     self.limiteConta = ko.observable(objAccount.limiteConta);
+// };
+
+
+var ModelAccounts = function () {
+    var self = this;
+    self.accounts = ko.observableArray();
+    self.idCliente = ko.observable();
+    self.nome = ko.observable('');
+    self.numero = ko.observable('');
+    self.tipo = ko.observable('');
+    self.editing = ko.observable(false);
+    self.finding = ko.observable('');
+    self.accountsInfo = ko.observableArray();
+    self.infosAccount = ko.observable('');
+
+
+    //Exibir
+    $.ajax ({
+        url: window.global.urlapi+"/v1/clientes",
+        type: "GET",
+        success: function(result){
+            console.log(result);
+            var records = result.records;
+            for (var i = 0; i < records.length; i++) {
+                self.accounts.push(new Account(records[i]));
+
+            }
+        }
+    });
+
+
+}
+
+
+window.model = new ModelAccounts();
+
+ko.applyBindings(window.model);
