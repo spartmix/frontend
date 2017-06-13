@@ -22,7 +22,12 @@ var ModelAccounts = function () {
     self.limite = ko.observable('');
     self.editing = ko.observable(false);
     self.finding = ko.observable('');
-    self.arrayLess = ko.observable('');
+    self.showAgain = ko.observable('');
+    self.cnumero = ko.observable('');
+    self.isDisabled = ko.observable(false);
+    self.disableEdit = ko.observable(true);
+    self.isHidden = ko.observable('none');
+    self.editConta = ko.observable('');
 
 
     //Exibir
@@ -38,15 +43,18 @@ var ModelAccounts = function () {
         }
     });
 
+    //aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa//
+
+
     //Editar
     self.editAccount = function(editar) {
         self.idCliente(editar.idCliente());
         self.nome(editar.nomeCliente());
         self.numero(editar.numeroConta());
         self.tipo(editar.tipoConta());
-        self.saldo(editar.saldoConta());
-        self.limite(editar.limiteConta());
         self.editing(true);
+        self.isDisabled(true);
+        self.disableEdit(false);
     }
 
     self.editButton = ko.computed(function(){
@@ -63,6 +71,7 @@ var ModelAccounts = function () {
             }
         });
     }
+
     //Registrar
     self.register = function() {
         if (false === self.editing()){
@@ -84,9 +93,9 @@ var ModelAccounts = function () {
             },
             success: function(insert) {
                 self.accounts.push(new Account(insert.records));
-                // self.nome('');
-                // self.numero('');
-                // self.tipo('');
+                self.nome('');
+                self.numero('');
+                self.tipo('');
             }
         });
     }
@@ -104,9 +113,12 @@ var ModelAccounts = function () {
                var secSearch = ko.utils.arrayFirst(self.accounts(), function(secEditingAccount){
                     return secEditingAccount.idCliente() === self.idCliente();
                 });
+                    self.saldo('');
+                    self.limite('');
             }
         })
     }
+
 
     self.edit = function() {
         $.ajax ({
@@ -115,10 +127,7 @@ var ModelAccounts = function () {
             data: {
                 nomeCliente: self.nome(),
                 numeroConta: self.numero(),
-                tipoConta: self.tipo(),
-                saldoConta: self.saldo(),
-                limiteConta: self.limite(),
-                cNumeroConta: self.numero()
+                tipoConta: self.tipo()
             },
             success: function(result) {
                 var searchAccount = ko.utils.arrayFirst(self.accounts(), function(editingAccount){
@@ -138,6 +147,7 @@ var ModelAccounts = function () {
             }
         });
     }
+
 
     var accentRemover = function(s) {
         var jsonAccentMap = '{"à":"a","á":"a","â":"a","ã":"a","ä":"a","å":"a","æ":"a","ç":"c","è":"e","é":"e","ê":"e","ë":"e","ì":"i","í":"i","î":"i","ï":"i","ñ":"n","ò":"o","ó":"o","ô":"o","õ":"o","ö":"o","ø":"o","ß":"s","ù":"u","ú":"u","û":"u","ü":"u","ÿ":"y"}';
@@ -164,15 +174,30 @@ var ModelAccounts = function () {
 
 
     self.infosAccount = function(consulta) {
-        // if (consulta.idCliente().indexOf(self.teste()) >= 0) {
-            self.teste.push(consulta);
-        // }
+        console.log(consulta);
+        self.teste.push(consulta);
+        self.nome('');
+        self.numero('');
+        self.tipo('');
+        self.editing(false);
+        self.isDisabled(false);
+    }
 
-        // self.teste.push(consulta);
+
+    self.backRegister = function() {
+        self.nome('');
+        self.numero('');
+        self.tipo('');
+        self.editing(false);
+        self.isDisabled(false);
+        self.disableEdit(true);
+    }
+
+    self.editConta = function() {
+        self.isHidden('');
     }
 
 }
-
 
 window.model = new ModelAccounts();
 
@@ -181,5 +206,6 @@ ko.applyBindings(window.model);
 
 
 $("#myModal").on("hidden.bs.modal", function () {
-    console.log(window.model.teste.removeAll());
+    window.model.teste.removeAll();
+    window.model.isHidden('none');
 });

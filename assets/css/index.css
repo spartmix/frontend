@@ -5,3 +5,7 @@
 .botaoEnviar{
     margin-top: 2px;
 }
+
+.inverter{
+   transform: rotateY(180deg);
+}
