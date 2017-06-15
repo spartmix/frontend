@@ -7,28 +7,34 @@ var Account = function(objAccount){
     self.cNumeroConta = ko.observable(objAccount.cNumeroConta);
     self.saldoConta = ko.observable(objAccount.saldoConta);
     self.limiteConta = ko.observable(objAccount.limiteConta);
+    self.idConta = ko.observable(objAccount.idConta);
 };
 
 
 var ModelAccounts = function () {
     var self = this;
-    self.accounts = ko.observableArray();
-    self.teste = ko.observableArray();
-    self.idCliente = ko.observable();
+    self.accounts = ko.observableArray(); //Array com os valores dos clientes :v
+    self.teste = ko.observableArray(); // Array com valores das contas;
+    self.idCliente = ko.observable('');
+    self.idConta = ko.observable('');
     self.nome = ko.observable('');
     self.numero = ko.observable('');
-    self.tipo = ko.observable('');
     self.saldo = ko.observable('');
     self.limite = ko.observable('');
+    self.sConta = ko.observable('');
+    self.lConta = ko.observable('');
     self.editing = ko.observable(false);
     self.finding = ko.observable('');
     self.showAgain = ko.observable('');
-    self.cnumero = ko.observable('');
     self.isDisabled = ko.observable(false);
     self.disableEdit = ko.observable(true);
     self.isHidden = ko.observable('none');
-    self.editConta = ko.observable('');
-
+    self.isHiddenAlt = ko.observable('none');
+    self.isHiddenSec = ko.observable('none');
+    self.checkTipo = ko.observable(true);
+    self.check = ko.observable('');
+    self.tipoConta = ko.observable('Corrente');
+    self.tipo = ko.observable(true);
 
     //Exibir
     $.ajax ({
@@ -38,13 +44,9 @@ var ModelAccounts = function () {
             var records = result.records;
             for (var i = 0; i < records.length; i++) {
                 self.accounts.push(new Account(records[i]));
-
             }
         }
     });
-
-    //aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa//
-
 
     //Editar
     self.editAccount = function(editar) {
@@ -61,8 +63,9 @@ var ModelAccounts = function () {
         return self.editing() ? 'Editar' : 'Registrar';
     })
 
+
     //remover
-    self.removeAccount = function(account) {
+    self.deleteConta = function(account) {
         $.ajax ({
             url:window.global.urlapi+"/v1/clientes/" + account.idCliente(),
             type:"DELETE",
@@ -71,6 +74,19 @@ var ModelAccounts = function () {
             }
         });
     }
+
+    self.removeAccount = function(account) {
+        if (confirm("Você deseja realmente remover essa conta?") === true) {
+             $.ajax ({
+                url:window.global.urlapi+"/v1/clientes/" + account.idCliente(),
+                type:"DELETE",
+                success: function(del) {
+                    self.accounts.remove(account);
+                }
+            });
+        }
+    }
+
 
     //Registrar
     self.register = function() {
@@ -82,6 +98,7 @@ var ModelAccounts = function () {
         self.edit();
     }
 
+
     self.add = function() {
         $.ajax ({
             url: window.global.urlapi+"/v1/clientes",
@@ -89,16 +106,17 @@ var ModelAccounts = function () {
             data: {
                 nomeCliente: self.nome(),
                 numeroConta: self.numero(),
-                tipoConta: self.tipo()
+                tipoConta: self.tipoConta()
             },
             success: function(insert) {
                 self.accounts.push(new Account(insert.records));
+                self.idCliente(insert.records.idCliente);
                 self.nome('');
-                self.numero('');
-                self.tipo('');
+                self.tipo(true);
             }
         });
     }
+
 
     self.ad = function() {
         $.ajax ({
@@ -113,21 +131,28 @@ var ModelAccounts = function () {
                var secSearch = ko.utils.arrayFirst(self.accounts(), function(secEditingAccount){
                     return secEditingAccount.idCliente() === self.idCliente();
                 });
-                    self.saldo('');
-                    self.limite('');
+                self.idConta(insert.records.idConta);
+                secSearch.idConta(insert.records.idConta);
+                secSearch.cNumeroConta(insert.records.numeroConta);
+                secSearch.saldoConta(insert.records.saldoConta);
+                secSearch.limiteConta(insert.records.limiteConta);
+                self.saldo('');
+                self.limite('');
+                self.numero('');
             }
         })
     }
 
 
     self.edit = function() {
+        console.log(self.idCliente())
         $.ajax ({
             url: window.global.urlapi+"/v1/clientes/" + self.idCliente(),
             type: "PUT",
             data: {
                 nomeCliente: self.nome(),
                 numeroConta: self.numero(),
-                tipoConta: self.tipo()
+                tipoConta: self.tipoConta()
             },
             success: function(result) {
                 var searchAccount = ko.utils.arrayFirst(self.accounts(), function(editingAccount){
@@ -136,11 +161,8 @@ var ModelAccounts = function () {
                 searchAccount.nomeCliente(result.records.nomeCliente);
                 searchAccount.numeroConta(result.records.numeroConta);
                 searchAccount.tipoConta(result.records.tipoConta);
-                searchAccount.saldoConta(result.records.saldoConta);
-                searchAccount.limiteConta(result.records.limiteConta);
                 self.nome('');
                 self.numero('');
-                self.tipo('');
                 self.saldo('');
                 self.limite('');
                 self.editing(false);
@@ -172,13 +194,10 @@ var ModelAccounts = function () {
         })
     });
 
-
     self.infosAccount = function(consulta) {
-        console.log(consulta);
         self.teste.push(consulta);
         self.nome('');
         self.numero('');
-        self.tipo('');
         self.editing(false);
         self.isDisabled(false);
     }
@@ -193,9 +212,71 @@ var ModelAccounts = function () {
         self.disableEdit(true);
     }
 
-    self.editConta = function() {
+    self.editConta = function(edit) {
         self.isHidden('');
+        self.isHiddenAlt('none');
+        self.isHiddenSec('none');
+        self.sConta(edit.saldoConta());
+        self.lConta(edit.limiteConta());
     }
+
+    self.changeValues = function(teste){
+        console.log(teste);
+        $.ajax ({
+            url: window.global.urlapi+"/v1/contas/" + self.idConta(),
+            type: "PUT",
+            data: {
+                saldoConta: self.sConta(),
+                limiteConta: self.lConta()
+            },
+            success: function(result) {
+                var accountSearch = ko.utils.arrayFirst(self.teste(), function(accountEditing){
+                    return accountEditing.idConta() === self.idConta();
+                });
+                accountSearch.saldoConta(result.records.saldoConta);
+                accountSearch.limiteConta(result.records.limiteConta);
+            }
+        });
+    }
+
+    self.closeMenu = function() {
+        self.saldo('');
+        self.limite('');
+        self.isHidden('none');
+    }
+
+    self.sacar = function() {
+        self.saldo('');
+        self.limite('');
+        self.isHidden('none');
+        self.isHiddenAlt('');
+        self.isHiddenSec('none');
+    }
+
+    self.closeMenuAlt = function() {
+        self.saldo('');
+        self.isHiddenAlt('none');
+    }
+
+    self.depositar = function() {
+        self.saldo('');
+        self.limite('');
+        self.isHidden('none');
+        self.isHiddenAlt('none');
+        self.isHiddenSec('');
+    }
+
+    self.transferir = function() {
+        self.saldo('');
+        self.limite('');
+        self.isHidden('none');
+        self.isHiddenAlt('none');
+        self.isHiddenSec('');
+    }
+
+    self.tipo.subscribe(function() {
+        self.tipoConta(self.tipo() ? 'Corrente' : 'Poupança');
+    })
 
 }
 
@@ -208,4 +289,8 @@ ko.applyBindings(window.model);
 $("#myModal").on("hidden.bs.modal", function () {
     window.model.teste.removeAll();
     window.model.isHidden('none');
+});
+
+$('#idDoElemento').change(function() {
+    window.model.tipo($(this).prop('checked'));
 });

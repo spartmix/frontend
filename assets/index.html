@@ -3,8 +3,10 @@
 <head>
     <title>Cadastros e Consultas</title>
     <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
     <link rel="stylesheet" href="vendor/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="./css/index.css">
+    <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
     <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous"> -->
 </head>
 <body>
@@ -14,9 +16,9 @@
             <a class="navbar-brand" href="#">
                 <strong>Clientes</strong>
             </a>
-            <a class="navbar-brand" href="contas.html">
+<!--             <a class="navbar-brand" href="contas.html">
                 <strong>Contas</strong>
-            </a>
+            </a> -->
             <form class="navbar-form navbar-left">
                 <div class="input-group">
                     <label class="input-group-addon glyphicon glyphicon-search"></label>
@@ -68,12 +70,8 @@
                         <br>
                         <div class="input-group">
                             <label class="input-group-addon glyphicon glyphicon-user"></label>
-                            <input style="margin-top: 1px;" type="text" autocomplete="off" required="" maxlength="6" data-bind="value: numero" onkeyup="somenteNumeros(this);" title="Apenas números são aceitos" name="numero" placeholder="Número da conta" class="form-control" pattern="[0-9]+$" >
-                        </div>
-                        <br>
-                        <div class="input-group">
-                            <label class="input-group-addon glyphicon glyphicon-user"></label>
-                            <input style="margin-top: 1px;" type="text" autocomplete="off" required="" data-bind="value: tipo" maxlength="30" name="tipo" placeholder="Corrente ou Poupança" title="Apenas números são aceitos" class="form-control">
+                            <input style="margin: 1px 10px 0 0; width: 65%; border-top-left-radius: " type="text" autocomplete="off" required="" maxlength="6" data-bind="value: numero" onkeyup="somenteNumeros(this);" title="Apenas números são aceitos" name="numero" placeholder="Número da conta" class="form-control" pattern="[0-9]+$" >
+                            <input type="checkbox" checked data-toggle="toggle" id="idDoElemento" data-on="Corrente" data-off="Poupança" data-onstyle="success" data-offstyle="danger">
                         </div>
                         <br>
                          <div class="input-group">
@@ -81,7 +79,7 @@
                             <input style="margin-top: 1px;" type="text" autocomplete="off" required="" data-bind="value: saldo, attr: {'disabled' : isDisabled}" maxlength="10" name="tipo" placeholder="Saldo (Apenas números)" title="Apenas números são aceitos" class="form-control" pattern="^\d*[0-9](\.\d*[0-9])?$">
                         </div>
                         <br>
-                         <div class="input-group">
+                        <div class="input-group">
                             <label class="input-group-addon glyphicon glyphicon-user"></label>
                             <input style="margin-top: 1px;" type="text" autocomplete="off" required="" data-bind="value: limite, attr: {'disabled' : isDisabled}" maxlength="10" name="tipo" placeholder="Limite" title="Apenas números são aceitos" class="form-control" pattern="^\d*[0-9](\.\d*[0-9])?$">
                         </div>
@@ -107,6 +105,7 @@
                                         <table class="table table-striped table-hover">
                                             <thead>
                                                 <tr>
+                                                    <td><strong>ID</strong></td>
                                                     <td><strong>Conta</strong></td>
                                                     <td><strong>Saldo</strong></td>
                                                     <td><strong>Limite</strong></td>
@@ -115,33 +114,58 @@
                                             </thead>
                                              <tbody data-bind="foreach: teste">
                                                 <tr>
+                                                    <td data-bind="text: idConta"></td>
                                                     <td data-bind="text: cNumeroConta"></td>
                                                     <td data-bind="text: saldoConta"></td>
                                                     <td data-bind="text: limiteConta"></td>
                                                     <td>
                                                         <button data-bind="click: $parent.editConta" class="botao btn btn-info btn-sm glyphicon glyphicon-edit" title="Editar"></button>
-                                                        <button data-bind="" class="botao btn btn-info btn-sm glyphicon glyphicon-share-alt" title="Sacar"></button>
-                                                        <button data-bind="" class="botao btn btn-info btn-sm glyphicon glyphicon-share-alt inverter" title="Depositar"></button>
-                                                        <button data-bind="" class="botao btn btn-info btn-sm glyphicon glyphicon-transfer" title="Transferir"></button>
+                                                       <!--  <button data-bind="click: $parent.sacar" class="botao btn btn-info btn-sm glyphicon glyphicon-share-alt" title="Sacar"></button>
+                                                        <button data-bind="click: $parent.depositar" class="botao btn btn-info btn-sm glyphicon glyphicon-share-alt inverter" title="Depositar"></button>
+                                                        <button data-bind="click: $parent.transferir" class="botao btn btn-info btn-sm glyphicon glyphicon-transfer" title="Transferir"></button> -->
                                                     </td>
                                                 </tr>
                                             </tbody>
                                         </table>
                                 </fieldset>
-                                <fieldset>
-                                    <form data-bind="submit: register" method="POST">
+                                <fieldset data-bind="style: {display: isHidden}">
+                                <legend><strong>Editando</strong></legend>
+                                    <form data-bind="" method="POST" class="col-md-6 col-md-push-3">
                                          <div class="input-group">
-                                            <label data-bind="style: {display: isHidden}" class="input-group-addon glyphicon glyphicon-user"></label>
-                                            <input style="width: 50%;" type="text" autocomplete="off" required="" data-bind="value: saldo, style: {display: isHidden}" maxlength="10" name="tipo" placeholder="Saldo (Apenas números)" title="Apenas números são aceitos" class="form-control col-md-6" pattern="^\d*[0-9](\.\d*[0-9])?$">
+                                            <label style="padding: -1px;"  class="input-group-addon glyphicon glyphicon-user"></label>
+                                            <input style="margin-top: 1px;" type="text" autocomplete="off" required="" data-bind="value: sConta, style: {display: isHidden}" maxlength="10" name="tipo" placeholder="Saldo (Apenas números)" title="Apenas números são aceitos" class="form-control col-md-6" pattern="^\d*[0-9](\.\d*[0-9])?$">
                                         </div>
                                         <br>
                                          <div class="input-group">
-                                            <label data-bind="style: {display: isHidden}" class="input-group-addon glyphicon glyphicon-user"></label>
-                                            <input style="width: 50%;" type="text" autocomplete="off" required="" data-bind="value: limite, style: {display: isHidden}" maxlength="10" name="tipo" placeholder="Limite" title="Apenas números são aceitos" class="form-control col-md-6" pattern="^\d*[0-9](\.\d*[0-9])?$">
+                                            <label style="padding: -1px;" class="input-group-addon glyphicon glyphicon-user"></label>
+                                            <input style="margin-top: 1px;" type="text" autocomplete="off" required="" data-bind="value: lConta, style: {display: isHidden}" maxlength="10" name="tipo" placeholder="Limite" title="Apenas números são aceitos" class="form-control col-md-6" pattern="^\d*[0-9](\.\d*[0-9])?$">
                                         </div>
-                                        <button style="clear: both;" type="submit" data-bind="style: {display: isHidden}" class="botao Enviar btn btn-info btn-sm pull-left">Alterar</button>
+                                        <button type="submit" data-bind="click: changeValues" class="botao Enviar btn btn-info btn-sm pull-left">Alterar</button>
+                                        <button data-bind="click: closeMenu, style: {display: isHidden}" class="botao Enviar btn btn-info btn-sm pull-left">Cancelar</button>
                                     </form>
                                 </fieldset>
+                                <!-- <fieldset>
+                                    <form data-bind="" method="POST">
+                                        <div class="input-group">
+                                            <label data-bind="style: {display: isHiddenAlt}" class="input-group-addon glyphicon glyphicon-user"></label>
+                                            <input style="width: 50%;" type="text" autocomplete="off" required="" data-bind="value: saldo, style: {display: isHiddenAlt}" maxlength="10" name="tipo" placeholder="Valor do saque" title="Apenas números são aceitos" class="form-control col-md-6" pattern="^\d*[0-9](\.\d*[0-9])?$">
+                                        </div>
+                                        <br>
+                                        <button type="submit" data-bind="style: {display: isHiddenAlt}" class="botao Enviar btn btn-info btn-sm pull-left">Sacar</button>
+                                        <button data-bind="click: closeMenuAlt, style: {display: isHiddenAlt}" class="botao Enviar btn btn-info btn-sm pull-left">Cancelar</button>
+                                    </form>
+                                </fieldset>
+                                <fieldset>
+                                    <form data-bind="" method="POST">
+                                        <div class="input-group">
+                                            <label data-bind="style: {display: isHiddenSec}" class="input-group-addon glyphicon glyphicon-user"></label>
+                                            <input style="width: 50%;" type="text" autocomplete="off" required="" data-bind="value: saldo, style: {display: isHiddenSec}" maxlength="10" name="tipo" placeholder="Valor do deposito" title="Apenas números são aceitos" class="form-control col-md-6" pattern="^\d*[0-9](\.\d*[0-9])?$">
+                                        </div>
+                                        <br>
+                                        <button type="submit" data-bind="style: {display: isHiddenSec}" class="botao Enviar btn btn-info btn-sm pull-left">Sacar</button>
+                                        <button data-bind="click: closeMenuAlt, style: {display: isHiddenSec}" class="botao Enviar btn btn-info btn-sm pull-left">Cancelar</button>
+                                    </form>
+                                </fieldset> -->
                             </div>
                         </div>
                     </div>
@@ -168,10 +192,12 @@
           campo.value = "";
         }
     }
+
  </script>
 
 <script type="text/javascript" src="./vendor/jquery/jquery-3.2.1.min.js"></script>
 <script type="text/javascript" src="./vendor/bootstrap/js/bootstrap.min.js"></script>
+<script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
 <!-- <script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script> -->
 <script type="text/javascript" src="./vendor/knockout/knockout-3.4.2.js"></script>
 <script type="text/javascript" src="./js/global.js"></script>
