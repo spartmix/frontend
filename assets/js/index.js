@@ -24,17 +24,17 @@ var ModelAccounts = function () {
     self.sConta = ko.observable('');
     self.lConta = ko.observable('');
     self.editing = ko.observable(false);
-    self.finding = ko.observable('');
+    self.finding = ko.observable('')
     self.showAgain = ko.observable('');
     self.isDisabled = ko.observable(false);
     self.disableEdit = ko.observable(true);
     self.isHidden = ko.observable('none');
     self.isHiddenAlt = ko.observable('none');
     self.isHiddenSec = ko.observable('none');
-    self.checkTipo = ko.observable(true);
-    self.check = ko.observable('');
     self.tipoConta = ko.observable('Corrente');
     self.tipo = ko.observable(true);
+    self.somarSaldo = ko.observable('');
+    self.tirarValor = ko.observable('');
 
     //Exibir
     $.ajax ({
@@ -53,10 +53,13 @@ var ModelAccounts = function () {
         self.idCliente(editar.idCliente());
         self.nome(editar.nomeCliente());
         self.numero(editar.numeroConta());
-        self.tipo(editar.tipoConta());
         self.editing(true);
         self.isDisabled(true);
         self.disableEdit(false);
+        self.tipo(true);
+        if ('Poupança' === editar.tipoConta()) {
+            self.tipo(false);
+        }
     }
 
     self.editButton = ko.computed(function(){
@@ -145,7 +148,6 @@ var ModelAccounts = function () {
 
 
     self.edit = function() {
-        console.log(self.idCliente())
         $.ajax ({
             url: window.global.urlapi+"/v1/clientes/" + self.idCliente(),
             type: "PUT",
@@ -163,13 +165,10 @@ var ModelAccounts = function () {
                 searchAccount.tipoConta(result.records.tipoConta);
                 self.nome('');
                 self.numero('');
-                self.saldo('');
-                self.limite('');
                 self.editing(false);
             }
         });
     }
-
 
     var accentRemover = function(s) {
         var jsonAccentMap = '{"à":"a","á":"a","â":"a","ã":"a","ä":"a","å":"a","æ":"a","ç":"c","è":"e","é":"e","ê":"e","ë":"e","ì":"i","í":"i","î":"i","ï":"i","ñ":"n","ò":"o","ó":"o","ô":"o","õ":"o","ö":"o","ø":"o","ß":"s","ù":"u","ú":"u","û":"u","ü":"u","ÿ":"y"}';
@@ -216,12 +215,12 @@ var ModelAccounts = function () {
         self.isHidden('');
         self.isHiddenAlt('none');
         self.isHiddenSec('none');
+        self.idConta(edit.idConta());
         self.sConta(edit.saldoConta());
         self.lConta(edit.limiteConta());
     }
 
-    self.changeValues = function(teste){
-        console.log(teste);
+    self.changeValues = function() {
         $.ajax ({
             url: window.global.urlapi+"/v1/contas/" + self.idConta(),
             type: "PUT",
@@ -233,10 +232,53 @@ var ModelAccounts = function () {
                 var accountSearch = ko.utils.arrayFirst(self.teste(), function(accountEditing){
                     return accountEditing.idConta() === self.idConta();
                 });
+
                 accountSearch.saldoConta(result.records.saldoConta);
                 accountSearch.limiteConta(result.records.limiteConta);
+                self.sConta('');
+                self.lConta('');
             }
         });
+    }
+
+    self.inserirDeposito = function() {
+        $.ajax ({
+            url: window.global.urlapi+"/v1/contas/depositar/" + self.idConta(),
+            type: "POST",
+            data: {
+                depositarValor: self.somarSaldo()
+            },
+            success: function(result) {
+                var insertValues = ko.utils.arrayFirst(self.teste(), function(inserting){
+                    return inserting.idConta() === self.idConta();
+                });
+                insertValues.saldoConta(result.records.saldoConta);
+                self.somarSaldo('');
+            }
+        })
+    }
+
+    self.sacarValores = function() {
+        $.ajax({
+            url:window.global.urlapi+"/v1/contas/sacar/" + self.idConta(),
+            type: "POST",
+            data: {
+                sacarValor: self.tirarValor()
+            },
+            success: function(result) {
+                var saque = ko.utils.arrayFirst(self.teste(), function(sacando){
+                    return sacando.idConta() === self.idConta();
+                });
+                saque.saldoConta(result.records.saldoConta);
+                self.tirarValor('');
+            }
+        })
+    }
+
+    self.showAgain = function() {
+        self.isHidden('none');
+        self.isHiddenAlt('none');
+        self.isHiddenSec('none');
     }
 
     self.closeMenu = function() {
@@ -245,7 +287,8 @@ var ModelAccounts = function () {
         self.isHidden('none');
     }
 
-    self.sacar = function() {
+    self.sacar = function(id) {
+        self.idConta(id.idConta());
         self.saldo('');
         self.limite('');
         self.isHidden('none');
@@ -254,16 +297,20 @@ var ModelAccounts = function () {
     }
 
     self.closeMenuAlt = function() {
-        self.saldo('');
         self.isHiddenAlt('none');
     }
 
-    self.depositar = function() {
+    self.closeMenuSec = function() {
+        self.isHiddenSec('none');
+    }
+
+    self.depositar = function(teste) {
         self.saldo('');
         self.limite('');
         self.isHidden('none');
         self.isHiddenAlt('none');
         self.isHiddenSec('');
+        self.idConta(teste.idConta());
     }
 
     self.transferir = function() {
