@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Cadastros e Consultas</title>
+    <title>Gerenciar Clientes</title>
     <meta charset="utf-8">
+    <link rel="shortcut icon" href="/img/sad-frog--feels-bad-man---meme-512-222252.png" />
     <meta name="viewport" content="width=device-width">
     <link rel="stylesheet" href="vendor/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="./css/index.css">
@@ -70,7 +71,7 @@
                         <br>
                         <div class="input-group">
                             <label class="input-group-addon glyphicon glyphicon-user"></label>
-                            <input style="margin: 1px 5px 0 0; border-radius: 0 5px 5px 0; width: 50%;" type="text" autocomplete="off" required="" maxlength="6" data-bind="value: numero" onkeyup="somenteNumeros(this);" title="Apenas números são aceitos" name="numero" placeholder="Número da conta" class="form-control" pattern="[0-9]+$" >
+                            <input style="margin: 1px 5px 0 0; border-radius: 0 5px 5px 0; width: 50%;" type="text" autocomplete="off" required="" maxlength="6" data-bind="value: numero, attr: {'disabled': isDisabledFirst}" onkeyup="somenteNumeros(this);" title="Apenas números são aceitos" name="numero" placeholder="Número da conta" class="form-control" pattern="[0-9]+$" >
                             <input type="checkbox" style="width: 50%;" checked data-toggle="toggle" id="idDoElemento" data-on="Corrente" data-off="Poupança" data-onstyle="success" data-offstyle="danger">
                         </div>
                         <br>
@@ -122,7 +123,7 @@
                                                         <button data-bind="click: $parent.editConta" class="botao btn btn-info btn-sm glyphicon glyphicon-edit" title="Editar"></button>
                                                         <button data-bind="click: $parent.depositar" class="botao btn btn-info btn-sm glyphicon glyphicon-share-alt inverter" title="Depositar"></button>
                                                         <button data-bind="click: $parent.sacar" class="botao btn btn-info btn-sm glyphicon glyphicon-share-alt" title="Sacar"></button>
-                                                        <!-- <button data-bind="click: $parent.transferir" class="botao btn btn-info btn-sm glyphicon glyphicon-transfer" title="Transferir"></button> -->
+                                                        <button data-bind="click: $parent.transferir" class="botao btn btn-info btn-sm glyphicon glyphicon-transfer" title="Transferir"></button>
                                                     </td>
                                                 </tr>
                                             </tbody>
@@ -132,12 +133,12 @@
                                 <legend><strong>Editar</strong></legend>
                                     <form data-bind="submit: changeValues" method="POST" class="col-md-6 col-md-push-3">
                                          <div class="input-group">
-                                            <label style="padding: -1px;"  class="input-group-addon glyphicon glyphicon-user"></label>
+                                            <label style="padding: -1px;"  class="input-group-addon"><strong>Saldo:</strong></label>
                                             <input style="margin-top: 1px;" type="text" autocomplete="off" required="" data-bind="value: sConta" maxlength="10" name="tipo" placeholder="Saldo (Apenas números)" title="Apenas números são aceitos" class="form-control col-md-6" pattern="^\d*[0-9](\.\d*[0-9])?$">
                                         </div>
-                                        <br>
+                                        <p></p>
                                          <div class="input-group">
-                                            <label style="padding: -1px;" class="input-group-addon glyphicon glyphicon-user"></label>
+                                            <label style="padding: -1px;" class="input-group-addon"><strong>Limite:</strong></label>
                                             <input style="margin-top: 1px;" type="text" autocomplete="off" required="" data-bind="value: lConta" maxlength="10" name="tipo" placeholder="Limite" title="Apenas números são aceitos" class="form-control col-md-6" pattern="^\d*[0-9](\.\d*[0-9])?$">
                                         </div>
                                         <button type="submit" class="botao Enviar btn btn-info btn-sm pull-left">Alterar</button>
@@ -145,27 +146,38 @@
                                     </form>
                                 </fieldset>
                                 <fieldset data-bind="style: {display: isHiddenAlt}">
-                                <legend><strong>Sacar</strong></legend>
-                                    <form data-bind="submit: sacarValores" method="POST">
+                                <legend><strong>Saques</strong></legend>
+                                    <form data-bind="submit: sacarValores" method="POST" class="col-md-6 col-md-push-3">
                                         <div class="input-group">
-                                            <label class="input-group-addon glyphicon glyphicon-user"></label>
-                                            <input style="width: 50%;" type="text" autocomplete="off" required="" data-bind="value: tirarValor" maxlength="10" name="tipo" placeholder="Valor do saque" title="Apenas números são aceitos" class="form-control col-md-6" pattern="^\d*[0-9](\.\d*[0-9])?$">
+                                            <label style="padding: -1px;" class="input-group-addon">$</label>
+                                            <input style="margin-top: 1px;" type="text" autocomplete="off" required="" data-bind="value: tirarValor" maxlength="10" name="tipo" placeholder="Valor do saque" title="Apenas números são aceitos" class="form-control col-md-6" pattern="^\d*[0-9](\.\d*[0-9])?$">
                                         </div>
-                                        <br>
                                         <button type="submit" class="botao Enviar btn btn-info btn-sm pull-left">Sacar</button>
                                         <button data-bind="click: closeMenuAlt" class="botao Enviar btn btn-info btn-sm pull-left">Cancelar</button>
                                     </form>
                                 </fieldset>
                                 <fieldset data-bind="style: {display: isHiddenSec}">
-                                    <legend><strong>Depositar</strong></legend>
-                                    <form data-bind="submit: inserirDeposito" method="POST">
+                                    <legend><strong>Depositos</strong></legend>
+                                    <form data-bind="submit: inserirDeposito" method="POST" class="col-md-6 col-md-push-3">
                                         <div class="input-group">
-                                            <label class="input-group-addon glyphicon glyphicon-user"></label>
-                                            <input style="width: 50%;" type="text" autocomplete="off" required="" data-bind="value: somarSaldo" maxlength="10" name="tipo" placeholder="Valor do deposito" title="Apenas números são aceitos" class="form-control col-md-6" pattern="^\d*[0-9](\.\d*[0-9])?$">
+                                            <label style="padding: -1px;" class="input-group-addon">$</label>
+                                            <input style="margin-top: 1px;" type="text" autocomplete="off" required="" data-bind="value: somarSaldo" maxlength="10" name="tipo" placeholder="Valor do deposito" title="Apenas números são aceitos" class="form-control col-md-6" pattern="^\d*[0-9](\.\d*[0-9])?$">
                                         </div>
-                                        <br>
                                         <button type="submit" class="botao Enviar btn btn-info btn-sm pull-left">Depositar</button>
                                         <button data-bind="click: closeMenuSec" class="botao Enviar btn btn-info btn-sm pull-left">Cancelar</button>
+                                    </form>
+                                </fieldset>
+                                <fieldset data-bind="style: {display: isHiddenLast}">
+                                    <legend><strong>Transferências</strong></legend>
+                                    <form data-bind="submit: transferirValores" method="POST" class="col-md-6 col-md-push-3">
+                                        <div class="input-group">
+                                            <label style="padding: -1px;" class="input-group-addon glyphicon glyphicon-user"></label>
+                                            <input style="margin-top: 1px;" type="text" autocomplete="off" required="" data-bind="value: contaAtual, attr: {'disabled': isDisabledLast}" maxlength="10" name="tipo" placeholder="Conta destino" title="Apenas números são aceitos" class="form-control col-md-6" pattern="^\d*[0-9](\.\d*[0-9])?$">
+                                            <input style="margin-top: 1px;" type="text" autocomplete="off" required="" data-bind="value: contaDestino" maxlength="10" name="tipo" placeholder="Conta destino" title="Apenas números são aceitos" class="form-control col-md-6" pattern="^\d*[0-9](\.\d*[0-9])?$">
+                                            <input style="margin-top: 1px;" type="text" autocomplete="off" required="" data-bind="value: valorTransf" maxlength="10" name="tipo" placeholder="Valor da transferência" title="Apenas números são aceitos" class="form-control col-md-6" pattern="^\d*[0-9](\.\d*[0-9])?$">
+                                        </div>
+                                        <button type="submit" class="botao Enviar btn btn-info btn-sm pull-left">Transferir</button>
+                                        <button data-bind="click: closeMenuLast" class="botao Enviar btn btn-info btn-sm pull-left">Cancelar</button>
                                     </form>
                                 </fieldset>
                             </div>

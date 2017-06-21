@@ -35,8 +35,13 @@ var ModelAccounts = function () {
     self.tipo = ko.observable(true);
     self.somarSaldo = ko.observable('');
     self.tirarValor = ko.observable('');
+    self.isHiddenLast = ko.observable('none');
+    self.valorTransf = ko.observable('');
+    self.contaDestino = ko.observable('');
+    self.contaAtual = ko.observable('');
+    self.isDisabledLast = ko.observable(true);
+    self.isDisabledFirst = ko.observable(false);
 
-    //Exibir
     $.ajax ({
         url: window.global.urlapi+"/v1/clientes",
         type: "GET",
@@ -48,7 +53,6 @@ var ModelAccounts = function () {
         }
     });
 
-    //Editar
     self.editAccount = function(editar) {
         self.idCliente(editar.idCliente());
         self.nome(editar.nomeCliente());
@@ -56,6 +60,8 @@ var ModelAccounts = function () {
         self.editing(true);
         self.isDisabled(true);
         self.disableEdit(false);
+        self.isDisabledFirst(true);
+
         self.tipo(true);
         if ('Poupança' === editar.tipoConta()) {
             self.tipo(false);
@@ -66,8 +72,6 @@ var ModelAccounts = function () {
         return self.editing() ? 'Editar' : 'Registrar';
     })
 
-
-    //remover
     self.deleteConta = function(account) {
         $.ajax ({
             url:window.global.urlapi+"/v1/clientes/" + account.idCliente(),
@@ -90,8 +94,6 @@ var ModelAccounts = function () {
         }
     }
 
-
-    //Registrar
     self.register = function() {
         if (false === self.editing()){
             self.add();
@@ -100,7 +102,6 @@ var ModelAccounts = function () {
         }
         self.edit();
     }
-
 
     self.add = function() {
         $.ajax ({
@@ -119,7 +120,6 @@ var ModelAccounts = function () {
             }
         });
     }
-
 
     self.ad = function() {
         $.ajax ({
@@ -146,7 +146,6 @@ var ModelAccounts = function () {
         })
     }
 
-
     self.edit = function() {
         $.ajax ({
             url: window.global.urlapi+"/v1/clientes/" + self.idCliente(),
@@ -166,6 +165,9 @@ var ModelAccounts = function () {
                 self.nome('');
                 self.numero('');
                 self.editing(false);
+                self.isDisabled(false);
+                self.disableEdit(true);
+                self.isDisabledFirst(false);
             }
         });
     }
@@ -180,7 +182,6 @@ var ModelAccounts = function () {
 
         return ret;
     };
-
 
     self.filteredAccounts = ko.computed(function() {
         if (self.finding().trim().length === 0) {
@@ -201,7 +202,6 @@ var ModelAccounts = function () {
         self.isDisabled(false);
     }
 
-
     self.backRegister = function() {
         self.nome('');
         self.numero('');
@@ -209,12 +209,16 @@ var ModelAccounts = function () {
         self.editing(false);
         self.isDisabled(false);
         self.disableEdit(true);
+        self.isDisabledFirst(false);
     }
 
     self.editConta = function(edit) {
         self.isHidden('');
+        self.valorTransf('');
+        self.contaDestino('');
         self.isHiddenAlt('none');
         self.isHiddenSec('none');
+        self.isHiddenLast('none');
         self.idConta(edit.idConta());
         self.sConta(edit.saldoConta());
         self.lConta(edit.limiteConta());
@@ -266,11 +270,36 @@ var ModelAccounts = function () {
                 sacarValor: self.tirarValor()
             },
             success: function(result) {
-                var saque = ko.utils.arrayFirst(self.teste(), function(sacando){
+                var saque = ko.utils.arrayFirst(self.teste(), function(sacando) {
                     return sacando.idConta() === self.idConta();
                 });
                 saque.saldoConta(result.records.saldoConta);
                 self.tirarValor('');
+            }
+        })
+    }
+
+    self.transferirValores = function() {
+        $.ajax({
+            url:window.global.urlapi+"/v1/contas/transferir",
+            type: "POST",
+            data: {
+                contaAtual: self.contaAtual(),
+                contaDestino: self.contaDestino(),
+                valorTransferencia: self.valorTransf()
+            },
+            success: function(result) {
+                var transf = ko.utils.arrayFirst(self.teste(), function(transferindo) {
+                    return transferindo.idConta() === self.idConta();
+                });
+
+                var depContaDestino = ko.utils.arrayFirst(self.accounts(), function(saque) {
+                    return saque.cNumeroConta() === self.contaDestino();
+                });
+                depContaDestino.saldoConta(result.records.Destino.saldoConta);
+                transf.saldoConta(result.records.Atual.saldoConta);
+                self.contaDestino('');
+                self.valorTransf('');
             }
         })
     }
@@ -281,50 +310,70 @@ var ModelAccounts = function () {
         self.isHiddenSec('none');
     }
 
+    self.sacar = function(id) {
+        self.idConta(id.idConta());
+        self.saldo('');
+        self.limite('');
+        self.somarSaldo('');
+        self.valorTransf('');
+        self.isHiddenAlt('');
+        self.contaDestino('');
+        self.isHidden('none');
+        self.isHiddenSec('none');
+        self.isHiddenLast('none');
+    }
+
     self.closeMenu = function() {
         self.saldo('');
         self.limite('');
         self.isHidden('none');
     }
 
-    self.sacar = function(id) {
-        self.idConta(id.idConta());
-        self.saldo('');
-        self.limite('');
-        self.isHidden('none');
-        self.isHiddenAlt('');
-        self.isHiddenSec('none');
-    }
-
     self.closeMenuAlt = function() {
+        self.tirarValor('');
         self.isHiddenAlt('none');
     }
 
     self.closeMenuSec = function() {
+        self.somarSaldo('');
         self.isHiddenSec('none');
+    }
+
+    self.closeMenuLast = function() {
+        self.isHiddenLast('none');
+        self.contaDestino('');
+        self.valorTransf('');
     }
 
     self.depositar = function(teste) {
         self.saldo('');
         self.limite('');
+        self.somarSaldo('');
+        self.tirarValor('');
+        self.isHiddenSec('');
+        self.valorTransf('');
+        self.contaDestino('');
         self.isHidden('none');
         self.isHiddenAlt('none');
-        self.isHiddenSec('');
+        self.isHiddenLast('none');
         self.idConta(teste.idConta());
     }
 
-    self.transferir = function() {
+    self.transferir = function(conta) {
         self.saldo('');
         self.limite('');
+        self.tirarValor('');
+        self.isHiddenLast('');
         self.isHidden('none');
+        self.isHiddenSec('none');
         self.isHiddenAlt('none');
-        self.isHiddenSec('');
+        self.idConta(conta.idConta());
+        self.contaAtual(conta.cNumeroConta());
     }
 
     self.tipo.subscribe(function() {
         self.tipoConta(self.tipo() ? 'Corrente' : 'Poupança');
     })
-
 }
 
 window.model = new ModelAccounts();
@@ -336,6 +385,7 @@ ko.applyBindings(window.model);
 $("#myModal").on("hidden.bs.modal", function () {
     window.model.teste.removeAll();
     window.model.isHidden('none');
+    window.model.isHiddenLast('none');
 });
 
 $('#idDoElemento').change(function() {
