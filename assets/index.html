@@ -76,13 +76,13 @@
                         </div>
                         <br>
                          <div class="input-group">
-                            <label class="input-group-addon glyphicon glyphicon-user"></label>
-                            <input style="margin-top: 1px;" type="text" autocomplete="off" required="" data-bind="value: saldo, attr: {'disabled' : isDisabled}" maxlength="10" name="tipo" placeholder="Saldo (Apenas números)" title="Apenas números são aceitos" class="form-control" pattern="^\d*[0-9](\.\d*[0-9])?$">
+                            <label class="input-group-addon"><strong style="font-size: 15px">$</strong></label>
+                            <input type="text" autocomplete="off" required="" data-bind="value: saldo, attr: {'disabled' : isDisabled}" maxlength="10" name="tipo" placeholder="Saldo (Apenas números)" title="Apenas números são aceitos" class="form-control" pattern="^\d*[0-9](\.\d*[0-9])?$">
                         </div>
                         <br>
                         <div class="input-group">
-                            <label class="input-group-addon glyphicon glyphicon-user"></label>
-                            <input style="margin-top: 1px;" type="text" autocomplete="off" required="" data-bind="value: limite, attr: {'disabled' : isDisabled}" maxlength="10" name="tipo" placeholder="Limite" title="Apenas números são aceitos" class="form-control" pattern="^\d*[0-9](\.\d*[0-9])?$">
+                            <label class="input-group-addon"><strong style="font-size: 15px;">$</strong></label>
+                            <input type="text" autocomplete="off" required="" data-bind="value: limite, attr: {'disabled' : isDisabled}" maxlength="10" name="tipo" placeholder="Limite" title="Apenas números são aceitos" class="form-control" pattern="^\d*[0-9](\.\d*[0-9])?$">
                         </div>
                         <button type="submit" data-bind="text: editButton" class="botao Enviar btn btn-info btn-sm pull-left"></button>
                         <button type="reset" data-bind="click: backRegister, attr: {'disabled' : disableEdit}" class="botao Enviar btn btn-info btn-sm pull-left">Voltar</button>

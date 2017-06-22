@@ -263,45 +263,66 @@ var ModelAccounts = function () {
     }
 
     self.sacarValores = function() {
-        $.ajax({
-            url:window.global.urlapi+"/v1/contas/sacar/" + self.idConta(),
-            type: "POST",
-            data: {
-                sacarValor: self.tirarValor()
-            },
-            success: function(result) {
-                var saque = ko.utils.arrayFirst(self.teste(), function(sacando) {
-                    return sacando.idConta() === self.idConta();
+        var a = ko.utils.arrayFirst(self.teste(), function(aa) {
+                    return aa.idConta() === self.idConta();
                 });
-                saque.saldoConta(result.records.saldoConta);
-                self.tirarValor('');
+        if (self.tirarValor() > a.saldoConta()) {
+            if (confirm('Saldo insuficiente, deseja realizar um depósito para continuar?') === true) {
+               return self.depositar();
             }
-        })
+            self.tirarValor('');
+        } else {
+            $.ajax({
+                url:window.global.urlapi+"/v1/contas/sacar/" + self.idConta(),
+                type: "POST",
+                data: {
+                    sacarValor: self.tirarValor()
+                },
+                success: function(result) {
+                    var saque = ko.utils.arrayFirst(self.teste(), function(sacando) {
+                        return sacando.idConta() === self.idConta();
+                    });
+
+                    saque.saldoConta(result.records.saldoConta);
+                    self.tirarValor('');
+                }
+            })
+        }
     }
 
     self.transferirValores = function() {
-        $.ajax({
-            url:window.global.urlapi+"/v1/contas/transferir",
-            type: "POST",
-            data: {
-                contaAtual: self.contaAtual(),
-                contaDestino: self.contaDestino(),
-                valorTransferencia: self.valorTransf()
-            },
-            success: function(result) {
-                var transf = ko.utils.arrayFirst(self.teste(), function(transferindo) {
-                    return transferindo.idConta() === self.idConta();
+        var i = ko.utils.arrayFirst(self.teste(), function(x) {
+                    return x.idConta() === self.idConta();
                 });
-
-                var depContaDestino = ko.utils.arrayFirst(self.accounts(), function(saque) {
-                    return saque.cNumeroConta() === self.contaDestino();
-                });
-                depContaDestino.saldoConta(result.records.Destino.saldoConta);
-                transf.saldoConta(result.records.Atual.saldoConta);
-                self.contaDestino('');
-                self.valorTransf('');
+        if (self.valorTransf() > i.saldoConta()) {
+            if (confirm('Saldo insuficiente, deseja realizar um depósito para continuar?') === true) {
+               return self.depositar();
             }
-        })
+            self.valorTransf('');
+        } else {
+            $.ajax({
+                url:window.global.urlapi+"/v1/contas/transferir",
+                type: "POST",
+                data: {
+                    contaAtual: self.contaAtual(),
+                    contaDestino: self.contaDestino(),
+                    valorTransferencia: self.valorTransf()
+                },
+                success: function(result) {
+                    var transf = ko.utils.arrayFirst(self.teste(), function(transferindo) {
+                        return transferindo.idConta() === self.idConta();
+                    });
+
+                    var depContaDestino = ko.utils.arrayFirst(self.accounts(), function(saque) {
+                        return saque.cNumeroConta() === self.contaDestino();
+                    });
+                    depContaDestino.saldoConta(result.records.Destino.saldoConta);
+                    transf.saldoConta(result.records.Atual.saldoConta);
+                    self.contaDestino('');
+                    self.valorTransf('');
+                }
+            })
+        }
     }
 
     self.showAgain = function() {
