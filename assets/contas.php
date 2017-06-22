@@ -7,26 +7,9 @@
     <link rel="stylesheet" type="text/css" href="./css/index.css">
 </head>
 <body>
-<nav class="navbar navbar-default">
-    <div class="container-fluid">
-        <div class="navbar-header">
-            <a class="navbar-brand" href="index.html">
-                <strong>Clientes</strong>
-            </a>
-            <a class="navbar-brand" href="#">
-                <strong>Contas</strong>
-            </a>
-            <form class="navbar-form navbar-left">
-                <div class="input-group">
-                    <label class="input-group-addon glyphicon glyphicon-search"></label>
-                    <input type="text" data-bind="textInput: finding" maxlength="25" class="form-control" placeholder="Conta ou nome do Cliente">
-                </div>
-            </form>
-        </div>
-    </div>
-</nav>
-
-
+<?php
+    include("includes/nav.html");
+?>
 
 
 <script type="text/javascript" src="./vendor/jquery/jquery-3.2.1.min.js"></script>

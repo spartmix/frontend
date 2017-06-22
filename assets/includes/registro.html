@@ -1,0 +1,29 @@
+<div class="col-md-3" style="float:right; margin-right: 3%;">
+    <fieldset>
+        <legend><h3><strong data-bind="text: editButton"></strong></h3></legend>
+            <form data-bind="submit: register" method="POST">
+                <div class="input-group">
+                    <label class="input-group-addon glyphicon glyphicon-user"></label>
+                    <input style="margin-top: 1px;" type="text" autocomplete="off" required="" data-bind="value: nome" name="nome" maxlength="70" placeholder="Nome do Cliente" class="form-control">
+                </div>
+                <br>
+                <div class="input-group">
+                    <label class="input-group-addon glyphicon glyphicon-user"></label>
+                    <input style="margin: 1px 5px 0 0; border-radius: 0 5px 5px 0; width: 50%;" type="text" autocomplete="off" required="" maxlength="6" data-bind="value: numero, attr: {'disabled': isDisabledFirst}" onkeyup="somenteNumeros(this);" title="Apenas números são aceitos" name="numero" placeholder="Número da conta" class="form-control" pattern="[0-9]+$" >
+                    <input type="checkbox" style="width: 50%;" checked data-toggle="toggle" id="idDoElemento" data-on="Corrente" data-off="Poupança" data-onstyle="success" data-offstyle="danger">
+                </div>
+                <br>
+                 <div class="input-group">
+                    <label class="input-group-addon"><strong style="font-size: 15px">$</strong></label>
+                    <input type="text" autocomplete="off" required="" data-bind="value: saldo, attr: {'disabled' : isDisabled}" maxlength="10" name="tipo" placeholder="Saldo (Apenas números)" title="Apenas números são aceitos" class="form-control" pattern="^\d*[0-9](\.\d*[0-9])?$">
+                </div>
+                <br>
+                <div class="input-group">
+                    <label class="input-group-addon"><strong style="font-size: 15px;">$</strong></label>
+                    <input type="text" autocomplete="off" required="" data-bind="value: limite, attr: {'disabled' : isDisabled}" maxlength="10" name="tipo" placeholder="Limite" title="Apenas números são aceitos" class="form-control" pattern="^\d*[0-9](\.\d*[0-9])?$">
+                </div>
+                <button type="submit" data-bind="text: editButton" class="botao Enviar btn btn-info btn-sm pull-left"></button>
+                <button type="reset" data-bind="click: backRegister, attr: {'disabled' : disableEdit}" class="botao Enviar btn btn-info btn-sm pull-left">Voltar</button>
+            </form>
+    </fieldset>
+</div>

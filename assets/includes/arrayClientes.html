@@ -1,0 +1,27 @@
+<fieldset>
+    <legend><h3><strong>Clientes Cadastrados</strong></h3></legend>
+        <table class="table table-striped table-hover">
+            <thead>
+                <tr>
+                    <td><strong>ID Cliente</strong></td>
+                    <td><strong>Nome Cliente</strong></td>
+                    <td><strong>Numero conta</strong></td>
+                    <td><strong>Tipo Conta</strong></td>
+                    <td><strong>Opções</strong></td>
+                </tr>
+            </thead>
+            <tbody data-bind="foreach: filteredAccounts">
+                <tr>
+                    <td data-bind="text: idCliente"></td>
+                    <td data-bind="text: nomeCliente"></td>
+                    <td data-bind="text: numeroConta"></td>
+                    <td data-bind="text: tipoConta"></td>
+                    <td>
+                        <button data-bind="click: $parent.removeAccount" class="botao btn btn-info btn-sm glyphicon glyphicon-remove"></button>
+                        <button data-bind="click: $parent.editAccount" class="botao btn btn-info btn-sm glyphicon glyphicon-edit"></button>
+                        <button data-bind="click: $parent.infosAccount" class="botao btn btn-info btn-sm btn btn-info btn-lg glyphicon glyphicon-info-sign" data-toggle="modal" data-target="#myModal"><a href="#" style="color: #fff; text-decoration: none;"></a></button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+</fieldset>

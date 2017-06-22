@@ -41,7 +41,6 @@ var ModelAccounts = function () {
             var records = result.records;
             for (var i = 0; i < records.length; i++) {
                 self.accounts.push(new Account(records[i]));
-
             }
         }
     });
